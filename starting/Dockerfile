@@ -1,10 +1,16 @@
-FROM jenkins/jenkins:2.277.1-jdk11
-
-COPY jenkins-resources/plugins.txt /usr/share/jenkins/ref/plugins.txt
-RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
-
-COPY jenkins-resources/initialConfig.groovy /usr/share/jenkins/ref/init.groovy.d/initialConfigs.groovy
-COPY jenkins-resources/jenkins.yaml /usr/share/jenkins/ref/jenkins.yaml
-COPY jenkins-resources/slaveTestJob.xml /usr/share/jenkins/ref/jobs/slave-test/config.xml
-
+# Dockerfile
+​
+FROM jenkins/jenkins:lts-jdk11
+​
+# copy the list of plugins we want to install
+COPY plugins.txt /usr/share/jenkins/plugins.txt
+# run the install-plugins script to install the plugins
+RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
+​
+# disable the setup wizard as we will set up jenkins as code :)
 ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
+​
+# copy the config-as-code yaml file into the image
+COPY jenkins-casc.yaml /usr/local/jenkins-casc.yaml
+# tell the jenkins config-as-code plugin where to find the yaml file
+ENV CASC_JENKINS_CONFIG /usr/local/jenkins-casc.yaml
