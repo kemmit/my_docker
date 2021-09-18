@@ -1,1 +1,3 @@
+# plugins.txt
+​
 configuration-as-code
